@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#9333ea">
+    <title>Princesa do SUS</title>
+    
+    <!-- Ícone do App -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:rgb(168,85,247);stop-opacity:1' /><stop offset='100%' style='stop-color:rgb(236,72,153);stop-opacity:1' /></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23grad)'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>👑</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>👑</text></svg>">
+    
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        const { useState } = React;
+
+        const Heart = ({ className }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        );
+
+        const Sparkles = ({ className }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" strokeWidth="2"/>
+            </svg>
+        );
+
+        const Award = ({ className }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="8" r="7" strokeWidth="2"/>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" strokeWidth="2"/>
+            </svg>
+        );
+
+        const Zap = ({ className }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" strokeWidth="2"/>
+            </svg>
+        );
+
+        const Shield = ({ className }) => (
+            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeWidth="2"/>
+            </svg>
+        );
+
+        const DragonGame = () => {
+            const [gameState, setGameState] = useState('intro');
+            const [currentQuestion, setCurrentQuestion] = useState(0);
+            const [score, setScore] = useState(0);
+            const [lives, setLives] = useState(3);
+            const [powers, setPowers] = useState([]);
+            const [selectedAnswer, setSelectedAnswer] = useState(null);
+            const [showFeedback, setShowFeedback] = useState(false);
+            const [dragonHealth, setDragonHealth] = useState(5);
+            const [dragonColor, setDragonColor] = useState('purple');
+
+            const dragonColors = ['purple', 'blue', 'green', 'orange', 'pink'];
+            const dragonEmojis = {
+                purple: '🟣',
+                blue: '🔵',
+                green: '🟢',
+                orange: '🟠',
+                pink: '🌸'
+            };
+
+            const getStudyTip = (score) => {
+                if (score === 5) {
+                    return {
+                        title: "PERFEITO! Você dominou esse dragão!",
+                        content: "Continue revisando os conceitos que acertou para mantê-los frescos na memória. Use flashcards e mapas mentais antes de dormir para fixação.",
+                        emoji: "👑"
+                    };
+                } else if (score >= 3) {
+                    return {
+                        title: "Muito bem! Você está no caminho certo!",
+                        content: "Revise os temas que você errou. Releia os blocos específicos dos resumos e refaça as questões. A repetição espaçada é sua aliada!",
+                        emoji: "💪"
+                    };
+                } else {
+                    return {
+                        title: "Precisa reforçar o estudo!",
+                        content: "Volte aos resumos dos dias anteriores. Foque 20 minutos nos temas que você errou antes de jogar novamente. Não desanime - erro é parte do aprendizado!",
+                        emoji: "📚"
+                    };
+                }
+            };
+
+            const questions = [
+                {
+                    difficulty: 'Fácil',
+                    theme: 'Lei 8.080',
+                    question: 'Qual princípio garante que TODOS possam usar o SUS, sem distinção?',
+                    options: ['Equidade', 'Universalidade', 'Integralidade', 'Descentralização', 'Hierarquização'],
+                    correct: 1,
+                    explanation: 'Universalidade = SUS é para TODOS! Rico, pobre, com ou sem carteira assinada.',
+                    power: 'Escudo da Universalidade'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Lei 8.142',
+                    question: 'Os usuários devem representar qual porcentagem dos Conselhos de Saúde?',
+                    options: ['25%', '33%', '40%', '50%', '60%'],
+                    correct: 3,
+                    explanation: 'Usuários = 50% (metade!). O resto divide entre trabalhadores e gestores/prestadores (25% cada).',
+                    power: 'Poção do Controle Social'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Redes de Atenção',
+                    question: 'O NASF-AB atende os pacientes sozinho, sem a equipe de Saúde da Família?',
+                    options: [
+                        'Sim, é um serviço independente',
+                        'Não, ele apenas apoia e matricia a eSF',
+                        'Sim, mas só em emergências',
+                        'Depende da decisão do município',
+                        'Sim, após encaminhamento médico'
+                    ],
+                    correct: 1,
+                    explanation: 'NASF-AB NÃO atende sozinho! Ele APOIA a equipe de SF. Essa é uma pegadinha clássica da FGV!',
+                    power: 'Cajado do Matriciamento'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Decreto 7.508',
+                    question: 'Qual é a porta de entrada PREFERENCIAL do SUS?',
+                    options: ['Hospitais', 'Pronto-socorro', 'Atenção Básica/Primária', 'Especialistas', 'CAPS'],
+                    correct: 2,
+                    explanation: 'Atenção Básica é a porta de entrada PREFERENCIAL! (Postinho primeiro, resto depois)',
+                    power: 'Chave das Portas de Entrada'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'CFP - Resoluções',
+                    question: 'Um psicólogo realizou atendimento em quarto compartilhado no hospital. Segundo as Referências Técnicas CFP (2019), essa prática:',
+                    options: [
+                        'É proibida - setting terapêutico deve ser preservado',
+                        'É permitida - a escuta clínica se adapta ao contexto hospitalar',
+                        'Só é permitida com autorização por escrito',
+                        'Deve ser evitada sempre que possível',
+                        'Só em casos de emergência psiquiátrica'
+                    ],
+                    correct: 1,
+                    explanation: 'A escuta clínica se ADAPTA ao contexto! No hospital, o setting é flexível. Você errou a Q85 sobre isso!',
+                    power: 'Coroa da Sabedoria Clínica'
+                }
+            ];
+
+            const startGame = () => {
+                const randomColor = dragonColors[Math.floor(Math.random() * dragonColors.length)];
+                setDragonColor(randomColor);
+                setGameState('playing');
+                setCurrentQuestion(0);
+                setScore(0);
+                setLives(3);
+                setPowers([]);
+                setDragonHealth(5);
+                setSelectedAnswer(null);
+                setShowFeedback(false);
+            };
+
+            const selectAnswer = (index) => {
+                if (showFeedback) return;
+                setSelectedAnswer(index);
+            };
+
+            const confirmAnswer = () => {
+                if (selectedAnswer === null) return;
+                
+                setShowFeedback(true);
+                const isCorrect = selectedAnswer === questions[currentQuestion].correct;
+                
+                if (isCorrect) {
+                    setScore(score + 1);
+                    setDragonHealth(dragonHealth - 1);
+                    setPowers([...powers, questions[currentQuestion].power]);
+                } else {
+                    setLives(lives - 1);
+                }
+            };
+
+            const nextQuestion = () => {
+                if (lives === 0) {
+                    setGameState('defeat');
+                    return;
+                }
+                
+                if (dragonHealth === 0 || currentQuestion === questions.length - 1) {
+                    setGameState('victory');
+                    return;
+                }
+                
+                setCurrentQuestion(currentQuestion + 1);
+                setSelectedAnswer(null);
+                setShowFeedback(false);
+            };
+
+            if (gameState === 'intro') {
+                return (
+                    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-700 to-pink-600 p-4 sm:p-8 flex items-center justify-center">
+                        <div className="max-w-2xl bg-white/10 backdrop-blur-lg rounded-3xl p-6 sm:p-8 text-white w-full">
+                            <div className="text-center mb-6">
+                                <div className="text-6xl mb-4">👑</div>
+                                <h1 className="text-3xl sm:text-4xl font-bold mb-4">A Princesa do SUS</h1>
+                                <p className="text-lg sm:text-xl mb-2">e o Dragão da Ignorância</p>
+                            </div>
+                            
+                            <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
+                                <p className="mb-4">
+                                    Você é a <strong>Princesa Psique</strong>, guardiã do conhecimento em saúde pública.
+                                </p>
+                                <p className="mb-4">
+                                    Um dragão terrível ameaça o Reino da Saúde com suas questões venenosas e pegadinhas ardilosas!
+                                </p>
+                                <p className="mb-4">
+                                    Para derrotá-lo, você precisa acertar <strong>5 questões</strong> sobre os temas da prova ENARE.
+                                </p>
+                                <p className="text-yellow-300 font-bold">
+                                    A cada acerto, você ganha um PODER MÁGICO e enfraquece o dragão!
+                                </p>
+                            </div>
+
+                            <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
+                                <h3 className="text-lg sm:text-xl font-bold mb-3">Regras da Batalha:</h3>
+                                <ul className="space-y-2">
+                                    <li>❤️ Você tem 3 vidas</li>
+                                    <li>🐉 O dragão tem 5 pontos de vida</li>
+                                    <li>✅ Acertou = dragão perde 1 vida + você ganha 1 poder</li>
+                                    <li>❌ Errou = você perde 1 vida</li>
+                                    <li>🏆 Vença derrotando o dragão antes de perder todas as vidas!</li>
+                                </ul>
+                            </div>
+
+                            <button
+                                onClick={startGame}
+                                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
+                            >
+                                Iniciar Batalha
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'playing') {
+                const q = questions[currentQuestion];
+                const isCorrect = showFeedback && selectedAnswer === q.correct;
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-700 to-pink-600 p-4 sm:p-8">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 mb-6 text-white text-sm sm:text-base">
+                                <div className="flex justify-between items-center mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <Heart className="text-red-400 w-5 h-5" />
+                                        <span>Vidas: {lives}/3</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span>Dragão {dragonEmojis[dragonColor]}: {dragonHealth}/5</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-2">
+                                    {powers.map((power, i) => (
+                                        <div key={i} className="bg-yellow-400/20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm flex items-center gap-1">
+                                            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                                            {power}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-2xl">
+                                <div className="mb-6">
+                                    <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
+                                        <span className={`px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${
+                                            q.difficulty === 'Fácil' ? 'bg-green-100 text-green-700' :
+                                            q.difficulty === 'Médio' ? 'bg-yellow-100 text-yellow-700' :
+                                            'bg-red-100 text-red-700'
+                                        }`}>
+                                            {q.difficulty}
+                                        </span>
+                                        <span className="px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-purple-100 text-purple-700">
+                                            {q.theme}
+                                        </span>
+                                    </div>
+                                    
+                                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+                                        Questão {currentQuestion + 1}/5
+                                    </h2>
+                                    <p className="text-base sm:text-xl text-gray-700 leading-relaxed">
+                                        {q.question}
+                                    </p>
+                                </div>
+
+                                <div className="space-y-3 mb-6">
+                                    {q.options.map((option, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => selectAnswer(index)}
+                                            disabled={showFeedback}
+                                            className={`w-full p-3 sm:p-4 text-left rounded-xl border-2 transition-all text-sm sm:text-base ${
+                                                selectedAnswer === index
+                                                    ? showFeedback
+                                                        ? index === q.correct
+                                                            ? 'border-green-500 bg-green-50'
+                                                            : 'border-red-500 bg-red-50'
+                                                        : 'border-purple-500 bg-purple-50'
+                                                    : 'border-gray-200 active:border-purple-300 active:bg-gray-50'
+                                            } ${showFeedback && index === q.correct ? 'border-green-500 bg-green-50' : ''}`}
+                                        >
+                                            <span className="font-medium">
+                                                {String.fromCharCode(65 + index)}) {option}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {showFeedback && (
+                                    <div className={`p-4 sm:p-6 rounded-xl mb-6 ${
+                                        isCorrect ? 'bg-green-50 border-2 border-green-300' : 'bg-red-50 border-2 border-red-300'
+                                    }`}>
+                                        <div className="flex items-center gap-3 mb-3">
+                                            {isCorrect ? (
+                                                <>
+                                                    <Zap className="text-green-600 w-6 h-6 sm:w-8 sm:h-8" />
+                                                    <span className="text-xl sm:text-2xl font-bold text-green-700">Acertou!</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="text-xl sm:text-2xl">💔</span>
+                                                    <span className="text-xl sm:text-2xl font-bold text-red-700">Errou!</span>
+                                                </>
+                                            )}
+                                        </div>
+                                        <p className="text-gray-700 text-sm sm:text-lg">{q.explanation}</p>
+                                        {isCorrect && (
+                                            <div className="mt-4 flex items-center gap-2 text-yellow-600 font-bold text-sm sm:text-base">
+                                                <Award className="w-5 h-5 sm:w-6 sm:h-6" />
+                                                Poder desbloqueado: {q.power}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {!showFeedback ? (
+                                    <button
+                                        onClick={confirmAnswer}
+                                        disabled={selectedAnswer === null}
+                                        className={`w-full py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl font-bold transition-all ${
+                                            selectedAnswer === null
+                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                : 'bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white transform active:scale-95'
+                                        }`}
+                                    >
+                                        Confirmar Resposta
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={nextQuestion}
+                                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
+                                    >
+                                        Próxima Questão
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'victory') {
+                const studyTip = getStudyTip(score);
+                const dragonGradient = 
+                    dragonColor === 'purple' ? 'from-purple-400 to-purple-600' :
+                    dragonColor === 'blue' ? 'from-blue-400 to-blue-600' :
+                    dragonColor === 'green' ? 'from-green-400 to-green-600' :
+                    dragonColor === 'orange' ? 'from-orange-400 to-orange-600' :
+                    'from-pink-400 to-pink-600';
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-b from-yellow-400 via-orange-400 to-pink-500 p-4 sm:p-8 flex items-center justify-center">
+                        <div className="max-w-2xl bg-white rounded-3xl p-6 sm:p-8 text-center w-full">
+                            <div className="text-6xl sm:text-8xl mb-6">👑</div>
+                            <h1 className="text-4xl sm:text-5xl font-bold text-purple-800 mb-4">VITÓRIA!</h1>
+                            <p className="text-xl sm:text-2xl text-gray-700 mb-6">
+                                A Princesa Psique derrotou o Dragão {dragonEmojis[dragonColor]}!
+                            </p>
+                            
+                            <div className="mb-6 relative">
+                                <div className={`w-32 h-32 sm:w-48 sm:h-48 mx-auto rounded-full bg-gradient-to-br ${dragonGradient} flex items-center justify-center shadow-2xl border-4 border-white`}>
+                                    <span className="text-6xl sm:text-8xl opacity-50">🐉</span>
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-4xl sm:text-6xl">✨</span>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-purple-50 rounded-2xl p-4 sm:p-6 mb-6">
+                                <p className="text-lg sm:text-xl mb-4">Você acertou <strong>{score}/5</strong> questões</p>
+                                <p className="text-base sm:text-lg text-gray-600 mb-4">Poderes conquistados:</p>
+                                <div className="space-y-2">
+                                    {powers.map((power, i) => (
+                                        <div key={i} className="flex items-center justify-center gap-2 text-purple-700 font-medium text-sm sm:text-base">
+                                            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            {power}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-purple-300 rounded-xl p-4 sm:p-6 mb-6">
+                                <div className="text-3xl sm:text-4xl mb-3">{studyTip.emoji}</div>
+                                <h3 className="text-lg sm:text-xl font-bold text-purple-800 mb-3">{studyTip.title}</h3>
+                                <p className="text-gray-700 text-left leading-relaxed text-sm sm:text-base">
+                                    {studyTip.content}
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={startGame}
+                                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
+                            >
+                                Enfrentar Novo Dragão
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (gameState === 'defeat') {
+                const studyTip = getStudyTip(score);
+                const dragonGradient = 
+                    dragonColor === 'purple' ? 'from-purple-400 to-purple-600' :
+                    dragonColor === 'blue' ? 'from-blue-400 to-blue-600' :
+                    dragonColor === 'green' ? 'from-green-400 to-green-600' :
+                    dragonColor === 'orange' ? 'from-orange-400 to-orange-600' :
+                    'from-pink-400 to-pink-600';
+
+                return (
+                    <div className="min-h-screen bg-gradient-to-b from-gray-700 via-gray-800 to-black p-4 sm:p-8 flex items-center justify-center">
+                        <div className="max-w-2xl bg-white rounded-3xl p-6 sm:p-8 text-center w-full">
+                            <div className="text-6xl sm:text-8xl mb-6">💔</div>
+                            <h1 className="text-4xl sm:text-5xl font-bold text-red-600 mb-4">Derrota...</h1>
+                            <p className="text-xl sm:text-2xl text-gray-700 mb-6">
+                                O Dragão {dragonEmojis[dragonColor]} venceu desta vez!
+                            </p>
+                            
+                            <div className="mb-6 relative">
+                                <div className={`w-32 h-32 sm:w-48 sm:h-48 mx-auto rounded-full bg-gradient-to-br ${dragonGradient} flex items-center justify-center shadow-2xl border-4 border-white animate-pulse`}>
+                                    <span className="text-6xl sm:text-8xl">🐉</span>
+                                </div>
+                                <div className="absolute -top-4 -right-4">
+                                    <span className="text-3xl sm:text-4xl">🔥</span>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-red-50 rounded-2xl p-4 sm:p-6 mb-6">
+                                <p className="text-lg sm:text-xl mb-4">Você acertou <strong>{score}/5</strong> questões</p>
+                                {powers.length > 0 && (
+                                    <>
+                                        <p className="text-base sm:text-lg text-gray-600 mb-4">Poderes que você conseguiu:</p>
+                                        <div className="space-y-2">
+                                            {powers.map((power, i) => (
+                                                <div key={i} className="flex items-center justify-center gap-2 text-purple-700 font-medium text-sm sm:text-base">
+                                                    <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+                                                    {power}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-xl p-4 sm:p-6 mb-6">
+                                <div className="text-3xl sm:text-4xl mb-3">{studyTip.emoji}</div>
+                                <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-3">{studyTip.title}</h3>
+                                <p className="text-gray-700 text-left leading-relaxed text-sm sm:text-base">
+                                    {studyTip.content}
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={startGame}
+                                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
+                            >
+                                Tentar Novamente
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return null;
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DragonGame />);
+    </script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+</html>
