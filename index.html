@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#9333ea">
     <title>Princesa do SUS</title>
     
-    <!-- Ícone do App -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:rgb(168,85,247);stop-opacity:1' /><stop offset='100%' style='stop-color:rgb(236,72,153);stop-opacity:1' /></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23grad)'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>👑</text></svg>">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>👑</text></svg>">
     
@@ -82,6 +81,7 @@
             const [showFeedback, setShowFeedback] = useState(false);
             const [dragonHealth, setDragonHealth] = useState(5);
             const [dragonColor, setDragonColor] = useState('purple');
+            const [selectedQuestions, setSelectedQuestions] = useState([]);
 
             const dragonColors = ['purple', 'blue', 'green', 'orange', 'pink'];
             const dragonEmojis = {
@@ -92,91 +92,266 @@
                 pink: '🌸'
             };
 
+            const allQuestions = [
+                // LEGISLAÇÃO (suas áreas fracas)
+                {
+                    difficulty: 'Fácil',
+                    theme: 'Lei 8.080',
+                    question: 'Segundo a Lei 8.080, saúde tem como determinantes e condicionantes fatores sociais e econômicos. Qual NÃO é mencionado como determinante?',
+                    options: ['Alimentação', 'Lazer', 'Genética', 'Moradia', 'Trabalho'],
+                    correct: 2,
+                    explanation: 'A lei menciona fatores sociais, econômicos e ambientais, mas não menciona genética como determinante. Pegadinha comum da FGV!',
+                    power: 'Amuleto da Saúde Ampliada'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Lei 8.080',
+                    question: 'Compete à direção MUNICIPAL do SUS gerir laboratórios públicos de saúde e hemocentros?',
+                    options: ['Sim, é competência exclusiva', 'Não, é competência estadual', 'Não, é competência federal', 'Sim, mas compartilhada com Estado', 'Depende do porte do município'],
+                    correct: 0,
+                    explanation: 'Art. 18 da Lei 8.080: compete AO MUNICÍPIO gerir laboratórios e hemocentros. Pegadinha: muitos acham que é do Estado!',
+                    power: 'Cetro da Gestão Municipal'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Lei 8.142',
+                    question: 'As Conferências de Saúde devem se reunir com qual periodicidade?',
+                    options: ['Mensalmente', 'Anualmente', 'A cada 2 anos', 'A cada 4 anos', 'Quando necessário'],
+                    correct: 3,
+                    explanation: 'Conferências = a cada 4 anos. Conselhos = permanentes. Não confunda!',
+                    power: 'Sino das Conferências'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'Decreto 7.508',
+                    question: 'O Decreto 7.508 instituiu qual instrumento de gestão compartilhada entre entes federados?',
+                    options: ['Pacto pela Saúde', 'COAP', 'RENASES', 'Mapa de Saúde', 'PPI'],
+                    correct: 1,
+                    explanation: 'COAP = Contrato Organizativo de Ação Pública da Saúde. Você errou Q3 sobre isso!',
+                    power: 'Pergaminho do COAP'
+                },
+                
+                // REDES E ATENÇÃO BÁSICA
+                {
+                    difficulty: 'Fácil',
+                    theme: 'Redes de Atenção',
+                    question: 'A Rede de Atenção às Urgências e Emergências (RUE) é considerada uma rede temática?',
+                    options: ['Sim', 'Não, é rede estruturante', 'Não, é rede operacional', 'Depende do município', 'Só em capitais'],
+                    correct: 0,
+                    explanation: 'RUE é uma das 6 principais redes temáticas. Você errou Q4 sobre isso - memorize CUPCAD!',
+                    power: 'Manto das Redes'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'ESF',
+                    question: 'A composição MÍNIMA da equipe de Saúde da Família (eSF) inclui obrigatoriamente cirurgião-dentista?',
+                    options: ['Sim, sempre', 'Não, dentista é opcional', 'Sim, em municípios acima de 50mil hab', 'Não, só em eSB', 'Depende da modalidade'],
+                    correct: 1,
+                    explanation: 'Mínimo = médico + enfermeiro + técnico/auxiliar enfermagem + ACS. Dentista é OPCIONAL (pode ter na eSB).',
+                    power: 'Brasão da Equipe'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'NASF-AB',
+                    question: 'O NASF-AB pode realizar atendimentos individuais aos usuários?',
+                    options: ['Não, apenas apoio matricial', 'Sim, mas sempre conjunto com eSF', 'Sim, de forma independente', 'Não, só ações coletivas', 'Apenas em emergências'],
+                    correct: 1,
+                    explanation: 'NASF pode atender, mas SEMPRE em ações compartilhadas com a eSF. Nunca sozinho!',
+                    power: 'Lança do Matriciamento'
+                },
+                
+                // EDUCAÇÃO PERMANENTE (você errou Q8!)
+                {
+                    difficulty: 'Médio',
+                    theme: 'Educação Permanente',
+                    question: 'A Educação Permanente em Saúde se diferencia da Educação Continuada por:',
+                    options: ['Ser obrigatória', 'Partir da problematização da realidade do trabalho', 'Ser oferecida em universidades', 'Ter certificação', 'Ser apenas para gestores'],
+                    correct: 1,
+                    explanation: 'EPS = parte dos problemas REAIS do trabalho. EC = cursos/capacitações tradicionais. Diferença crucial!',
+                    power: 'Livro da Aprendizagem'
+                },
+                
+                // VIGILÂNCIA EM SAÚDE (você errou Q12!)
+                {
+                    difficulty: 'Médio',
+                    theme: 'Vigilância em Saúde',
+                    question: 'Segundo a Resolução 588/2018, vigilância em saúde é definida como:',
+                    options: ['Controle de doenças transmissíveis', 'Processo contínuo de coleta, análise e disseminação de dados sobre eventos de saúde', 'Fiscalização sanitária de estabelecimentos', 'Monitoramento de indicadores', 'Investigação de surtos'],
+                    correct: 1,
+                    explanation: 'Vigilância = processo CONTÍNUO e SISTEMÁTICO. Não é só fiscalização ou controle de doenças! Você errou Q12.',
+                    power: 'Olho da Vigilância'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'Vigilância em Saúde',
+                    question: 'O financiamento da vigilância em saúde é garantido de forma:',
+                    options: ['Federal exclusiva', 'Estadual e municipal', 'Tripartite', 'Municipal exclusiva', 'Por convênios'],
+                    correct: 2,
+                    explanation: 'Tripartite = União, Estado e Município. Você errou Q13 sobre isso!',
+                    power: 'Cofre Tripartite'
+                },
+                
+                // BIOÉTICA (você errou Q14!)
+                {
+                    difficulty: 'Fácil',
+                    theme: 'Bioética',
+                    question: 'Qual NÃO é um princípio da Bioética Principialista?',
+                    options: ['Autonomia', 'Beneficência', 'Não-maleficência', 'Integralidade', 'Justiça'],
+                    correct: 3,
+                    explanation: 'Os 4 princípios: Autonomia, Beneficência, Não-maleficência e Justiça. Integralidade é do SUS! Você errou Q14.',
+                    power: 'Balança da Bioética'
+                },
+                
+                // SEGURANÇA DO PACIENTE (você errou Q19 e Q20!)
+                {
+                    difficulty: 'Médio',
+                    theme: 'Segurança do Paciente',
+                    question: 'A cor OBRIGATÓRIA da pulseira de identificação do paciente segundo o PNSP é:',
+                    options: ['Azul', 'Verde', 'Branca', 'Amarela', 'Vermelha'],
+                    correct: 2,
+                    explanation: 'Branca é obrigatória para identificação. As cores têm significados específicos (vermelho=alergia, amarelo=queda, roxo=não reanimar). Você errou Q19!',
+                    power: 'Pulseira Protetora'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'Segurança do Paciente',
+                    question: 'Segundo a RDC 36/2013, evento adverso é:',
+                    options: ['Qualquer incidente na assistência', 'Efeito colateral esperado', 'Incidente que resulta em dano ao paciente', 'Erro de medicação', 'Complicação da doença'],
+                    correct: 2,
+                    explanation: 'Evento adverso = incidente que RESULTA EM DANO. Não é qualquer incidente! Você errou Q20.',
+                    power: 'Escudo da Segurança'
+                },
+                
+                // CFP - RESOLUÇÕES (suas áreas MUITO fracas!)
+                {
+                    difficulty: 'Médio',
+                    theme: 'CFP - Ética',
+                    question: 'O psicólogo pode divulgar preços de seus serviços como propaganda?',
+                    options: ['Sim, sem restrições', 'Não, é vedado', 'Sim, apenas em site próprio', 'Sim, se for preço social', 'Depende do CRP'],
+                    correct: 1,
+                    explanation: 'É VEDADO usar preço como propaganda. O Código de Ética proíbe isso explicitamente.',
+                    power: 'Código de Honra'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'CFP - Documentos',
+                    question: 'Um parecer psicológico tem como finalidade:',
+                    options: ['Certificar condições psicológicas', 'Apresentar análise técnica sobre questão-problema', 'Registrar prestação de serviço', 'Subsidiar decisões', 'Declarar comparecimento'],
+                    correct: 1,
+                    explanation: 'Parecer = análise técnica sobre questão-problema ou documentos questionados. Você errou Q44 sobre isso!',
+                    power: 'Pena da Perícia'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'CFP - Atuação',
+                    question: 'Segundo Referências Técnicas CFP (2019), o atendimento psicológico em quarto compartilhado hospitalar:',
+                    options: ['É proibido', 'É permitido, a escuta se adapta ao contexto', 'Só com autorização', 'Só em emergências', 'Requer setting privado'],
+                    correct: 1,
+                    explanation: 'A escuta clínica SE ADAPTA ao contexto hospitalar. O setting é flexível. Você errou Q85 sobre isso!',
+                    power: 'Manto da Adaptação'
+                },
+                
+                // AVALIAÇÃO PSICOLÓGICA (sua área fraca!)
+                {
+                    difficulty: 'Médio',
+                    theme: 'Avaliação Psicológica',
+                    question: 'Na anamnese neuropsicológica, os dados NÃO permitem ao psicólogo:',
+                    options: ['Criar rapport com paciente', 'Fazer diagnóstico preciso dos transtornos', 'Planejar esferas a avaliar', 'Levantar sinais de alerta', 'Definir testes a usar'],
+                    correct: 1,
+                    explanation: 'Anamnese NÃO faz diagnóstico preciso sozinha! Ela orienta avaliação. Você errou Q37 sobre isso.',
+                    power: 'Mapa da Anamnese'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'Avaliação Psicológica',
+                    question: 'No hospital, a avaliação psicológica deve:',
+                    options: ['Seguir modelo de psicodiagnóstico tradicional', 'Adaptar-se ao contexto, sendo mais flexível', 'Ser apenas preventiva', 'Aguardar alta para avaliar', 'Focar só em testes'],
+                    correct: 1,
+                    explanation: 'Avaliação hospitalar é ADAPTADA e FLEXÍVEL. Não segue modelo ambulatorial tradicional! Você errou Q88.',
+                    power: 'Cristal da Flexibilidade'
+                },
+                
+                // REFORMA PSIQUIÁTRICA E SAÚDE MENTAL
+                {
+                    difficulty: 'Médio',
+                    theme: 'Reforma Psiquiátrica',
+                    question: 'A clínica ampliada na perspectiva da Reforma Psiquiátrica busca:',
+                    options: ['Focar nos sintomas', 'Resgatar subjetividade e autonomia do usuário', 'Padronizar tratamentos', 'Priorizar medicação', 'Isolar para tratamento'],
+                    correct: 1,
+                    explanation: 'Clínica ampliada = SUBJETIVIDADE + AUTONOMIA + contexto social. Não é só sintoma! Você errou Q95.',
+                    power: 'Chave da Liberdade'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'RAPS',
+                    question: 'A RAPS tem como objetivo específico:',
+                    options: ['Erradicar uso de drogas', 'Garantir articulação dos pontos de atenção', 'Criar novos hospitais psiquiátricos', 'Atender só casos graves', 'Focar em internação'],
+                    correct: 1,
+                    explanation: 'RAPS = articulação e integração dos pontos de atenção. Não é erradicação ou internação!',
+                    power: 'Rede da Atenção'
+                },
+                
+                // TEMAS CLÍNICOS ESPECÍFICOS
+                {
+                    difficulty: 'Médio',
+                    theme: 'Cuidados Paliativos',
+                    question: 'Segundo a OMS, cuidados paliativos são destinados a:',
+                    options: ['Pacientes terminais apenas', 'Pacientes que não respondem a tratamento curativo', 'Indivíduos com doenças graves em qualquer momento', 'Idosos em fim de vida', 'Pacientes sem perspectiva'],
+                    correct: 2,
+                    explanation: 'Cuidados paliativos = doenças graves em QUALQUER momento, não só fim de vida! Você errou Q71.',
+                    power: 'Manto do Conforto'
+                },
+                {
+                    difficulty: 'Difícil',
+                    theme: 'Urgência Subjetiva',
+                    question: 'Na urgência subjetiva, o psicanalista deve:',
+                    options: ['Focar na urgência da equipe', 'Priorizar tempo de concluir', 'Sustentar clínica da demanda em palavras', 'Acolher impotência do paciente', 'Interpretar trauma imediato'],
+                    correct: 2,
+                    explanation: 'Urgência subjetiva = sustentar DEMANDA formulada em PALAVRAS, reintroduzir na cadeia significante. Você errou Q84!',
+                    power: 'Ampulheta do Tempo'
+                },
+                {
+                    difficulty: 'Médio',
+                    theme: 'Trabalho Multiprofissional',
+                    question: 'Uma equipe de cuidados em saúde mental deve:',
+                    options: ['Ter hierarquia clara de saberes', 'Evitar deixar-se capturar em único saber', 'Seguir protocolo pré-fabricado', 'Formar-se automaticamente', 'Desconsiderar especificidades'],
+                    correct: 1,
+                    explanation: 'Equipe NÃO pode se aprisionar em único saber ou hierarquia rígida. Trabalho é horizontal e dialógico.',
+                    power: 'Círculo da Equipe'
+                }
+            ];
+
             const getStudyTip = (score) => {
                 if (score === 5) {
                     return {
                         title: "PERFEITO! Você dominou esse dragão!",
-                        content: "Continue revisando os conceitos que acertou para mantê-los frescos na memória. Use flashcards e mapas mentais antes de dormir para fixação.",
+                        content: "Continue revisando os conceitos. Use flashcards e mapas mentais antes de dormir.",
                         emoji: "👑"
                     };
                 } else if (score >= 3) {
                     return {
-                        title: "Muito bem! Você está no caminho certo!",
-                        content: "Revise os temas que você errou. Releia os blocos específicos dos resumos e refaça as questões. A repetição espaçada é sua aliada!",
+                        title: "Muito bem! No caminho certo!",
+                        content: "Revise os temas errados. Releia os blocos específicos dos resumos. Repetição espaçada é sua aliada!",
                         emoji: "💪"
                     };
                 } else {
                     return {
                         title: "Precisa reforçar o estudo!",
-                        content: "Volte aos resumos dos dias anteriores. Foque 20 minutos nos temas que você errou antes de jogar novamente. Não desanime - erro é parte do aprendizado!",
+                        content: "Volte aos resumos. Foque 20 minutos nos temas errados antes de jogar novamente. Erro faz parte do aprendizado!",
                         emoji: "📚"
                     };
                 }
             };
 
-            const questions = [
-                {
-                    difficulty: 'Fácil',
-                    theme: 'Lei 8.080',
-                    question: 'Qual princípio garante que TODOS possam usar o SUS, sem distinção?',
-                    options: ['Equidade', 'Universalidade', 'Integralidade', 'Descentralização', 'Hierarquização'],
-                    correct: 1,
-                    explanation: 'Universalidade = SUS é para TODOS! Rico, pobre, com ou sem carteira assinada.',
-                    power: 'Escudo da Universalidade'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Lei 8.142',
-                    question: 'Os usuários devem representar qual porcentagem dos Conselhos de Saúde?',
-                    options: ['25%', '33%', '40%', '50%', '60%'],
-                    correct: 3,
-                    explanation: 'Usuários = 50% (metade!). O resto divide entre trabalhadores e gestores/prestadores (25% cada).',
-                    power: 'Poção do Controle Social'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Redes de Atenção',
-                    question: 'O NASF-AB atende os pacientes sozinho, sem a equipe de Saúde da Família?',
-                    options: [
-                        'Sim, é um serviço independente',
-                        'Não, ele apenas apoia e matricia a eSF',
-                        'Sim, mas só em emergências',
-                        'Depende da decisão do município',
-                        'Sim, após encaminhamento médico'
-                    ],
-                    correct: 1,
-                    explanation: 'NASF-AB NÃO atende sozinho! Ele APOIA a equipe de SF. Essa é uma pegadinha clássica da FGV!',
-                    power: 'Cajado do Matriciamento'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Decreto 7.508',
-                    question: 'Qual é a porta de entrada PREFERENCIAL do SUS?',
-                    options: ['Hospitais', 'Pronto-socorro', 'Atenção Básica/Primária', 'Especialistas', 'CAPS'],
-                    correct: 2,
-                    explanation: 'Atenção Básica é a porta de entrada PREFERENCIAL! (Postinho primeiro, resto depois)',
-                    power: 'Chave das Portas de Entrada'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'CFP - Resoluções',
-                    question: 'Um psicólogo realizou atendimento em quarto compartilhado no hospital. Segundo as Referências Técnicas CFP (2019), essa prática:',
-                    options: [
-                        'É proibida - setting terapêutico deve ser preservado',
-                        'É permitida - a escuta clínica se adapta ao contexto hospitalar',
-                        'Só é permitida com autorização por escrito',
-                        'Deve ser evitada sempre que possível',
-                        'Só em casos de emergência psiquiátrica'
-                    ],
-                    correct: 1,
-                    explanation: 'A escuta clínica se ADAPTA ao contexto! No hospital, o setting é flexível. Você errou a Q85 sobre isso!',
-                    power: 'Coroa da Sabedoria Clínica'
-                }
-            ];
+            const selectRandomQuestions = () => {
+                const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+                return shuffled.slice(0, 5);
+            };
 
             const startGame = () => {
                 const randomColor = dragonColors[Math.floor(Math.random() * dragonColors.length)];
                 setDragonColor(randomColor);
+                setSelectedQuestions(selectRandomQuestions());
                 setGameState('playing');
                 setCurrentQuestion(0);
                 setScore(0);
@@ -196,12 +371,12 @@
                 if (selectedAnswer === null) return;
                 
                 setShowFeedback(true);
-                const isCorrect = selectedAnswer === questions[currentQuestion].correct;
+                const isCorrect = selectedAnswer === selectedQuestions[currentQuestion].correct;
                 
                 if (isCorrect) {
                     setScore(score + 1);
                     setDragonHealth(dragonHealth - 1);
-                    setPowers([...powers, questions[currentQuestion].power]);
+                    setPowers([...powers, selectedQuestions[currentQuestion].power]);
                 } else {
                     setLives(lives - 1);
                 }
@@ -213,7 +388,7 @@
                     return;
                 }
                 
-                if (dragonHealth === 0 || currentQuestion === questions.length - 1) {
+                if (dragonHealth === 0 || currentQuestion === selectedQuestions.length - 1) {
                     setGameState('victory');
                     return;
                 }
@@ -230,7 +405,7 @@
                             <div className="text-center mb-6">
                                 <div className="text-6xl mb-4">👑</div>
                                 <h1 className="text-3xl sm:text-4xl font-bold mb-4">A Princesa do SUS</h1>
-                                <p className="text-lg sm:text-xl mb-2">e o Dragão da Ignorância</p>
+                                <p className="text-lg sm:text-xl mb-2">e os Dragões da Ignorância</p>
                             </div>
                             
                             <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
@@ -238,24 +413,21 @@
                                     Você é a <strong>Princesa Psique</strong>, guardiã do conhecimento em saúde pública.
                                 </p>
                                 <p className="mb-4">
-                                    Um dragão terrível ameaça o Reino da Saúde com suas questões venenosas e pegadinhas ardilosas!
-                                </p>
-                                <p className="mb-4">
-                                    Para derrotá-lo, você precisa acertar <strong>5 questões</strong> sobre os temas da prova ENARE.
+                                    Dragões coloridos ameaçam o Reino da Saúde! Cada um traz 5 questões diferentes sobre os temas do ENARE.
                                 </p>
                                 <p className="text-yellow-300 font-bold">
-                                    A cada acerto, você ganha um PODER MÁGICO e enfraquece o dragão!
+                                    Banco com 25 questões - a cada rodada, 5 questões aleatórias!
                                 </p>
                             </div>
 
                             <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
-                                <h3 className="text-lg sm:text-xl font-bold mb-3">Regras da Batalha:</h3>
+                                <h3 className="text-lg sm:text-xl font-bold mb-3">Regras:</h3>
                                 <ul className="space-y-2">
-                                    <li>❤️ Você tem 3 vidas</li>
-                                    <li>🐉 O dragão tem 5 pontos de vida</li>
-                                    <li>✅ Acertou = dragão perde 1 vida + você ganha 1 poder</li>
+                                    <li>❤️ Você: 3 vidas</li>
+                                    <li>🐉 Dragão: 5 vidas</li>
+                                    <li>✅ Acertou = dragão perde 1 vida + você ganha poder</li>
                                     <li>❌ Errou = você perde 1 vida</li>
-                                    <li>🏆 Vença derrotando o dragão antes de perder todas as vidas!</li>
+                                    <li>🎲 Questões diferentes a cada rodada!</li>
                                 </ul>
                             </div>
 
@@ -271,7 +443,7 @@
             }
 
             if (gameState === 'playing') {
-                const q = questions[currentQuestion];
+                const q = selectedQuestions[currentQuestion];
                 const isCorrect = showFeedback && selectedAnswer === q.correct;
 
                 return (
