@@ -4,34 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#9333ea">
-    <title>Princesa do SUS</title>
-    
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:rgb(168,85,247);stop-opacity:1' /><stop offset='100%' style='stop-color:rgb(236,72,153);stop-opacity:1' /></linearGradient></defs><circle cx='50' cy='50' r='50' fill='url(%23grad)'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>👑</text></svg>">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>👑</text></svg>">
+    <title>Revisão ENARE 2025</title>
     
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            overflow-x: hidden;
-        }
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        * { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
 <body>
@@ -40,662 +22,207 @@
     <script type="text/babel" data-type="module">
         const { useState } = React;
 
-        const Heart = ({ className }) => (
-            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-        );
-
-        const Sparkles = ({ className }) => (
-            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 3v18m9-9H3m15.364-6.364L5.636 18.364m12.728 0L5.636 5.636" strokeWidth="2"/>
-            </svg>
-        );
-
-        const Award = ({ className }) => (
-            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <circle cx="12" cy="8" r="7" strokeWidth="2"/>
-                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" strokeWidth="2"/>
-            </svg>
-        );
-
-        const Zap = ({ className }) => (
-            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" strokeWidth="2"/>
-            </svg>
-        );
-
-        const Shield = ({ className }) => (
-            <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeWidth="2"/>
-            </svg>
-        );
-
-        const DragonGame = () => {
-            const [gameState, setGameState] = useState('intro');
-            const [currentQuestion, setCurrentQuestion] = useState(0);
+        const RevisaoApp = () => {
+            const [currentQ, setCurrentQ] = useState(0);
             const [score, setScore] = useState(0);
-            const [lives, setLives] = useState(3);
-            const [powers, setPowers] = useState([]);
-            const [selectedAnswer, setSelectedAnswer] = useState(null);
-            const [showFeedback, setShowFeedback] = useState(false);
-            const [dragonHealth, setDragonHealth] = useState(5);
-            const [dragonColor, setDragonColor] = useState('purple');
-            const [selectedQuestions, setSelectedQuestions] = useState([]);
+            const [selected, setSelected] = useState(null);
+            const [showResult, setShowResult] = useState(false);
+            const [answers, setAnswers] = useState([]);
 
-            const dragonColors = ['purple', 'blue', 'green', 'orange', 'pink'];
-            const dragonEmojis = {
-                purple: '🟣',
-                blue: '🔵',
-                green: '🟢',
-                orange: '🟠',
-                pink: '🌸'
-            };
-
-            const allQuestions = [
-                // LEGISLAÇÃO (suas áreas fracas)
-                {
-                    difficulty: 'Fácil',
-                    theme: 'Lei 8.080',
-                    question: 'Segundo a Lei 8.080, saúde tem como determinantes e condicionantes fatores sociais e econômicos. Qual NÃO é mencionado como determinante?',
-                    options: ['Alimentação', 'Lazer', 'Genética', 'Moradia', 'Trabalho'],
-                    correct: 2,
-                    explanation: 'A lei menciona fatores sociais, econômicos e ambientais, mas não menciona genética como determinante. Pegadinha comum da FGV!',
-                    power: 'Amuleto da Saúde Ampliada'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Lei 8.080',
-                    question: 'Compete à direção MUNICIPAL do SUS gerir laboratórios públicos de saúde e hemocentros?',
-                    options: ['Sim, é competência exclusiva', 'Não, é competência estadual', 'Não, é competência federal', 'Sim, mas compartilhada com Estado', 'Depende do porte do município'],
-                    correct: 0,
-                    explanation: 'Art. 18 da Lei 8.080: compete AO MUNICÍPIO gerir laboratórios e hemocentros. Pegadinha: muitos acham que é do Estado!',
-                    power: 'Cetro da Gestão Municipal'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Lei 8.142',
-                    question: 'As Conferências de Saúde devem se reunir com qual periodicidade?',
-                    options: ['Mensalmente', 'Anualmente', 'A cada 2 anos', 'A cada 4 anos', 'Quando necessário'],
-                    correct: 3,
-                    explanation: 'Conferências = a cada 4 anos. Conselhos = permanentes. Não confunda!',
-                    power: 'Sino das Conferências'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'Decreto 7.508',
-                    question: 'O Decreto 7.508 instituiu qual instrumento de gestão compartilhada entre entes federados?',
-                    options: ['Pacto pela Saúde', 'COAP', 'RENASES', 'Mapa de Saúde', 'PPI'],
-                    correct: 1,
-                    explanation: 'COAP = Contrato Organizativo de Ação Pública da Saúde. Você errou Q3 sobre isso!',
-                    power: 'Pergaminho do COAP'
-                },
+            const questions = [
+                // CONHECIMENTOS GERAIS - SUS
+                { q: 'Município prioriza recursos para comunidade carente. Isso representa:', o: ['Universalidade', 'Equidade', 'Integralidade', 'Descentralização'], c: 1, tema: 'Princípios SUS' },
+                { q: 'Competência de gerir hemocentros é:', o: ['União', 'Estado', 'Município', 'Compartilhada'], c: 2, tema: 'Lei 8.080' },
+                { q: 'Usuários nos Conselhos de Saúde:', o: ['25%', '33%', '50%', '75%'], c: 2, tema: 'Lei 8.142' },
+                { q: 'Conferências de Saúde ocorrem a cada:', o: ['1 ano', '2 anos', '4 anos', '5 anos'], c: 2, tema: 'Lei 8.142' },
+                { q: 'COAP foi instituído por:', o: ['Lei 8.080', 'Lei 8.142', 'Decreto 7.508', 'PNAB'], c: 2, tema: 'Decreto 7.508' },
+                { q: 'Porta entrada preferencial SUS:', o: ['Hospital', 'PS', 'Atenção Básica', 'Especialista'], c: 2, tema: 'Decreto 7.508' },
+                { q: 'RUE é classificada como:', o: ['Rede estruturante', 'Rede temática', 'Rede operacional', 'Rede apoio'], c: 1, tema: 'Redes RAS' },
+                { q: 'NASF-AB atende sozinho?', o: ['Sim', 'Não, só apoia eSF', 'Depende', 'Só emergências'], c: 1, tema: 'NASF-AB' },
+                { q: 'Equipe eSF mínima tem dentista obrigatório?', o: ['Sim', 'Não', 'Só grandes cidades', 'Depende'], c: 1, tema: 'ESF' },
+                { q: 'AB e AP são:', o: ['Diferentes', 'Sinônimos', 'AB é municipal', 'AP é federal'], c: 1, tema: 'PNAB' },
                 
-                // REDES E ATENÇÃO BÁSICA
-                {
-                    difficulty: 'Fácil',
-                    theme: 'Redes de Atenção',
-                    question: 'A Rede de Atenção às Urgências e Emergências (RUE) é considerada uma rede temática?',
-                    options: ['Sim', 'Não, é rede estruturante', 'Não, é rede operacional', 'Depende do município', 'Só em capitais'],
-                    correct: 0,
-                    explanation: 'RUE é uma das 6 principais redes temáticas. Você errou Q4 sobre isso - memorize CUPCAD!',
-                    power: 'Manto das Redes'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'ESF',
-                    question: 'A composição MÍNIMA da equipe de Saúde da Família (eSF) inclui obrigatoriamente cirurgião-dentista?',
-                    options: ['Sim, sempre', 'Não, dentista é opcional', 'Sim, em municípios acima de 50mil hab', 'Não, só em eSB', 'Depende da modalidade'],
-                    correct: 1,
-                    explanation: 'Mínimo = médico + enfermeiro + técnico/auxiliar enfermagem + ACS. Dentista é OPCIONAL (pode ter na eSB).',
-                    power: 'Brasão da Equipe'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'NASF-AB',
-                    question: 'O NASF-AB pode realizar atendimentos individuais aos usuários?',
-                    options: ['Não, apenas apoio matricial', 'Sim, mas sempre conjunto com eSF', 'Sim, de forma independente', 'Não, só ações coletivas', 'Apenas em emergências'],
-                    correct: 1,
-                    explanation: 'NASF pode atender, mas SEMPRE em ações compartilhadas com a eSF. Nunca sozinho!',
-                    power: 'Lança do Matriciamento'
-                },
+                // EDUCAÇÃO PERMANENTE + HUMANIZAÇÃO
+                { q: 'EP parte de:', o: ['Cursos', 'Problemas trabalho', 'Conteúdo prévio', 'Certificação'], c: 1, tema: 'Ed. Permanente' },
+                { q: 'Acolhimento é:', o: ['Triagem', 'Espaço físico', 'Postura ética', 'Recepção'], c: 2, tema: 'Humanização' },
+                { q: 'Princípio PNH que aumenta comunicação:', o: ['Autonomia', 'Indissociabilidade', 'Transversalidade', 'Integralidade'], c: 2, tema: 'Humanização' },
                 
-                // EDUCAÇÃO PERMANENTE (você errou Q8!)
-                {
-                    difficulty: 'Médio',
-                    theme: 'Educação Permanente',
-                    question: 'A Educação Permanente em Saúde se diferencia da Educação Continuada por:',
-                    options: ['Ser obrigatória', 'Partir da problematização da realidade do trabalho', 'Ser oferecida em universidades', 'Ter certificação', 'Ser apenas para gestores'],
-                    correct: 1,
-                    explanation: 'EPS = parte dos problemas REAIS do trabalho. EC = cursos/capacitações tradicionais. Diferença crucial!',
-                    power: 'Livro da Aprendizagem'
-                },
+                // VIGILÂNCIA + SEGURANÇA
+                { q: 'Financiamento vigilância é:', o: ['Federal', 'Estadual', 'Municipal', 'Tripartite'], c: 3, tema: 'Vigilância' },
+                { q: 'NR 32 Classe 2:', o: ['Baixo-Baixo', 'Moderado-Baixa', 'Alto-Alta', 'Moderado-Alta'], c: 1, tema: 'NR 32' },
+                { q: 'Cor pulseira obrigatória:', o: ['Vermelha', 'Amarela', 'Branca', 'Azul'], c: 2, tema: 'Segurança Paciente' },
+                { q: 'Evento adverso é incidente:', o: ['Qualquer', 'Com dano', 'Grave', 'Evitável'], c: 1, tema: 'Segurança Paciente' },
                 
-                // VIGILÂNCIA EM SAÚDE (você errou Q12!)
-                {
-                    difficulty: 'Médio',
-                    theme: 'Vigilância em Saúde',
-                    question: 'Segundo a Resolução 588/2018, vigilância em saúde é definida como:',
-                    options: ['Controle de doenças transmissíveis', 'Processo contínuo de coleta, análise e disseminação de dados sobre eventos de saúde', 'Fiscalização sanitária de estabelecimentos', 'Monitoramento de indicadores', 'Investigação de surtos'],
-                    correct: 1,
-                    explanation: 'Vigilância = processo CONTÍNUO e SISTEMÁTICO. Não é só fiscalização ou controle de doenças! Você errou Q12.',
-                    power: 'Olho da Vigilância'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'Vigilância em Saúde',
-                    question: 'O financiamento da vigilância em saúde é garantido de forma:',
-                    options: ['Federal exclusiva', 'Estadual e municipal', 'Tripartite', 'Municipal exclusiva', 'Por convênios'],
-                    correct: 2,
-                    explanation: 'Tripartite = União, Estado e Município. Você errou Q13 sobre isso!',
-                    power: 'Cofre Tripartite'
-                },
+                // POPULAÇÕES + BIOÉTICA
+                { q: 'Equipe ribeirinha mínima precisa dentista?', o: ['Sim', 'Não', 'Depende', 'Só capitais'], c: 1, tema: 'Populações' },
+                { q: 'Integralidade é princípio da bioética?', o: ['Sim', 'Não', 'Depende', 'Só no Brasil'], c: 1, tema: 'Bioética' },
+                { q: 'Consultório Rua registra em:', o: ['SINAN', 'SISAB', 'RNDS', 'CNES'], c: 1, tema: 'Consultório Rua' },
                 
-                // BIOÉTICA (você errou Q14!)
-                {
-                    difficulty: 'Fácil',
-                    theme: 'Bioética',
-                    question: 'Qual NÃO é um princípio da Bioética Principialista?',
-                    options: ['Autonomia', 'Beneficência', 'Não-maleficência', 'Integralidade', 'Justiça'],
-                    correct: 3,
-                    explanation: 'Os 4 princípios: Autonomia, Beneficência, Não-maleficência e Justiça. Integralidade é do SUS! Você errou Q14.',
-                    power: 'Balança da Bioética'
-                },
+                // CFP - ÉTICA E RESOLUÇÕES
+                { q: 'Psicólogo pode anunciar preço?', o: ['Sim', 'Não', 'Só redes sociais', 'Só social'], c: 1, tema: 'Ética CFP' },
+                { q: 'Resolução 1/2009 trata de:', o: ['Documentos', 'Orientação sexual', 'Testes', 'Registros'], c: 1, tema: 'CFP 1/2009' },
+                { q: 'Parecer psicológico serve para:', o: ['Certificar', 'Análise técnica questão', 'Registrar', 'Declarar'], c: 1, tema: 'CFP 6/2019' },
+                { q: 'Laudo psicológico serve para:', o: ['Análise questão', 'Resultado avaliação', 'Descrever situação', 'Informar'], c: 1, tema: 'CFP 6/2019' },
+                { q: 'Registros técnicos devem incluir testes?', o: ['Não', 'Sim, pasta exclusiva', 'Só se perícia', 'Depende'], c: 1, tema: 'CFP 1/2009' },
                 
-                // SEGURANÇA DO PACIENTE (você errou Q19 e Q20!)
-                {
-                    difficulty: 'Médio',
-                    theme: 'Segurança do Paciente',
-                    question: 'A cor OBRIGATÓRIA da pulseira de identificação do paciente segundo o PNSP é:',
-                    options: ['Azul', 'Verde', 'Branca', 'Amarela', 'Vermelha'],
-                    correct: 2,
-                    explanation: 'Branca é obrigatória para identificação. As cores têm significados específicos (vermelho=alergia, amarelo=queda, roxo=não reanimar). Você errou Q19!',
-                    power: 'Pulseira Protetora'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'Segurança do Paciente',
-                    question: 'Segundo a RDC 36/2013, evento adverso é:',
-                    options: ['Qualquer incidente na assistência', 'Efeito colateral esperado', 'Incidente que resulta em dano ao paciente', 'Erro de medicação', 'Complicação da doença'],
-                    correct: 2,
-                    explanation: 'Evento adverso = incidente que RESULTA EM DANO. Não é qualquer incidente! Você errou Q20.',
-                    power: 'Escudo da Segurança'
-                },
+                // AVALIAÇÃO PSICOLÓGICA
+                { q: 'Atendimento quarto compartilhado hospital:', o: ['Proibido', 'Permitido, adapta', 'Só emergência', 'Com autorização'], c: 1, tema: 'Atuação Hospitalar' },
+                { q: 'Anamnese neuropsico diagnostica sozinha?', o: ['Sim', 'Não, só orienta', 'Depende', 'Sim, se experiente'], c: 1, tema: 'Avaliação' },
+                { q: 'Avaliação hospitalar segue modelo tradicional?', o: ['Sim', 'Não, é adaptada', 'Depende', 'Só estrutura'], c: 1, tema: 'Avaliação' },
+                { q: 'Avaliação bariátrica foca só em:', o: ['Contraindicações', 'Biopsicossocial', 'Testes', 'Psicopatologias'], c: 1, tema: 'Avaliação' },
                 
-                // CFP - RESOLUÇÕES (suas áreas MUITO fracas!)
-                {
-                    difficulty: 'Médio',
-                    theme: 'CFP - Ética',
-                    question: 'O psicólogo pode divulgar preços de seus serviços como propaganda?',
-                    options: ['Sim, sem restrições', 'Não, é vedado', 'Sim, apenas em site próprio', 'Sim, se for preço social', 'Depende do CRP'],
-                    correct: 1,
-                    explanation: 'É VEDADO usar preço como propaganda. O Código de Ética proíbe isso explicitamente.',
-                    power: 'Código de Honra'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'CFP - Documentos',
-                    question: 'Um parecer psicológico tem como finalidade:',
-                    options: ['Certificar condições psicológicas', 'Apresentar análise técnica sobre questão-problema', 'Registrar prestação de serviço', 'Subsidiar decisões', 'Declarar comparecimento'],
-                    correct: 1,
-                    explanation: 'Parecer = análise técnica sobre questão-problema ou documentos questionados. Você errou Q44 sobre isso!',
-                    power: 'Pena da Perícia'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'CFP - Atuação',
-                    question: 'Segundo Referências Técnicas CFP (2019), o atendimento psicológico em quarto compartilhado hospitalar:',
-                    options: ['É proibido', 'É permitido, a escuta se adapta ao contexto', 'Só com autorização', 'Só em emergências', 'Requer setting privado'],
-                    correct: 1,
-                    explanation: 'A escuta clínica SE ADAPTA ao contexto hospitalar. O setting é flexível. Você errou Q85 sobre isso!',
-                    power: 'Manto da Adaptação'
-                },
+                // REFORMA + SAÚDE MENTAL
+                { q: 'Clínica ampliada foca em:', o: ['Sintomas', 'Subjetividade+autonomia', 'Medicação', 'Isolamento'], c: 1, tema: 'Reforma Psiq.' },
+                { q: 'CAPS funciona:', o: ['8h', '12h', '24h todos', '24h só CAPS III'], c: 3, tema: 'CAPS' },
+                { q: 'PTS é construído:', o: ['Pela equipe', 'COM usuário', 'Pelo médico', 'Protocolo'], c: 1, tema: 'PTS' },
+                { q: 'Redução danos exige:', o: ['Abstinência', 'Não exige abstinência', 'Internação', 'Medicação'], c: 1, tema: 'Redução Danos' },
+                { q: 'Equipe saúde mental deve:', o: ['Hierarquizar saberes', 'Não capturar único saber', 'Seguir protocolo', 'Priorizar médico'], c: 1, tema: 'Trabalho Equipe' },
                 
-                // AVALIAÇÃO PSICOLÓGICA (sua área fraca!)
-                {
-                    difficulty: 'Médio',
-                    theme: 'Avaliação Psicológica',
-                    question: 'Na anamnese neuropsicológica, os dados NÃO permitem ao psicólogo:',
-                    options: ['Criar rapport com paciente', 'Fazer diagnóstico preciso dos transtornos', 'Planejar esferas a avaliar', 'Levantar sinais de alerta', 'Definir testes a usar'],
-                    correct: 1,
-                    explanation: 'Anamnese NÃO faz diagnóstico preciso sozinha! Ela orienta avaliação. Você errou Q37 sobre isso.',
-                    power: 'Mapa da Anamnese'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'Avaliação Psicológica',
-                    question: 'No hospital, a avaliação psicológica deve:',
-                    options: ['Seguir modelo de psicodiagnóstico tradicional', 'Adaptar-se ao contexto, sendo mais flexível', 'Ser apenas preventiva', 'Aguardar alta para avaliar', 'Focar só em testes'],
-                    correct: 1,
-                    explanation: 'Avaliação hospitalar é ADAPTADA e FLEXÍVEL. Não segue modelo ambulatorial tradicional! Você errou Q88.',
-                    power: 'Cristal da Flexibilidade'
-                },
+                // CLÍNICA ESPECÍFICA
+                { q: 'Paliativos são para:', o: ['Fim vida só', 'Qualquer momento doença', 'Terminais', 'Sem cura'], c: 1, tema: 'Paliativos' },
+                { q: 'Luto empobrece:', o: ['Ego', 'Mundo', 'Ambos', 'Nenhum'], c: 1, tema: 'Luto' },
+                { q: 'Melancolia empobrece:', o: ['Ego', 'Mundo', 'Ambos', 'Nenhum'], c: 0, tema: 'Luto' },
+                { q: 'Urgência subjetiva: psicanalista deve:', o: ['Focar urgência equipe', 'Sustentar demanda palavras', 'Priorizar concluir', 'Interpretar rápido'], c: 1, tema: 'Urgência Subjetiva' },
+                { q: 'Debriefing obrigatório é:', o: ['Recomendado', 'Controverso', 'Obrigatório', 'Proibido'], c: 1, tema: 'Emergências' },
+                { q: 'Perguntar sobre suicídio:', o: ['Aumenta risco', 'Não aumenta risco', 'Depende', 'Só se grave'], c: 1, tema: 'Suicídio' },
+                { q: 'Maior preditor suicídio:', o: ['Depressão', 'Tentativa prévia', 'Idade', 'Gênero'], c: 1, tema: 'Suicídio' },
                 
-                // REFORMA PSIQUIÁTRICA E SAÚDE MENTAL
-                {
-                    difficulty: 'Médio',
-                    theme: 'Reforma Psiquiátrica',
-                    question: 'A clínica ampliada na perspectiva da Reforma Psiquiátrica busca:',
-                    options: ['Focar nos sintomas', 'Resgatar subjetividade e autonomia do usuário', 'Padronizar tratamentos', 'Priorizar medicação', 'Isolar para tratamento'],
-                    correct: 1,
-                    explanation: 'Clínica ampliada = SUBJETIVIDADE + AUTONOMIA + contexto social. Não é só sintoma! Você errou Q95.',
-                    power: 'Chave da Liberdade'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'RAPS',
-                    question: 'A RAPS tem como objetivo específico:',
-                    options: ['Erradicar uso de drogas', 'Garantir articulação dos pontos de atenção', 'Criar novos hospitais psiquiátricos', 'Atender só casos graves', 'Focar em internação'],
-                    correct: 1,
-                    explanation: 'RAPS = articulação e integração dos pontos de atenção. Não é erradicação ou internação!',
-                    power: 'Rede da Atenção'
-                },
-                
-                // TEMAS CLÍNICOS ESPECÍFICOS
-                {
-                    difficulty: 'Médio',
-                    theme: 'Cuidados Paliativos',
-                    question: 'Segundo a OMS, cuidados paliativos são destinados a:',
-                    options: ['Pacientes terminais apenas', 'Pacientes que não respondem a tratamento curativo', 'Indivíduos com doenças graves em qualquer momento', 'Idosos em fim de vida', 'Pacientes sem perspectiva'],
-                    correct: 2,
-                    explanation: 'Cuidados paliativos = doenças graves em QUALQUER momento, não só fim de vida! Você errou Q71.',
-                    power: 'Manto do Conforto'
-                },
-                {
-                    difficulty: 'Difícil',
-                    theme: 'Urgência Subjetiva',
-                    question: 'Na urgência subjetiva, o psicanalista deve:',
-                    options: ['Focar na urgência da equipe', 'Priorizar tempo de concluir', 'Sustentar clínica da demanda em palavras', 'Acolher impotência do paciente', 'Interpretar trauma imediato'],
-                    correct: 2,
-                    explanation: 'Urgência subjetiva = sustentar DEMANDA formulada em PALAVRAS, reintroduzir na cadeia significante. Você errou Q84!',
-                    power: 'Ampulheta do Tempo'
-                },
-                {
-                    difficulty: 'Médio',
-                    theme: 'Trabalho Multiprofissional',
-                    question: 'Uma equipe de cuidados em saúde mental deve:',
-                    options: ['Ter hierarquia clara de saberes', 'Evitar deixar-se capturar em único saber', 'Seguir protocolo pré-fabricado', 'Formar-se automaticamente', 'Desconsiderar especificidades'],
-                    correct: 1,
-                    explanation: 'Equipe NÃO pode se aprisionar em único saber ou hierarquia rígida. Trabalho é horizontal e dialógico.',
-                    power: 'Círculo da Equipe'
-                }
+                // PSICOPATOLOGIA
+                { q: 'Alucinação é percepção:', o: ['Distorcida estímulo', 'Sem estímulo', 'Aumentada', 'Diminuída'], c: 1, tema: 'Exame Psíquico' },
+                { q: 'Ilusão é percepção:', o: ['Sem estímulo', 'Distorcida estímulo', 'Aumentada', 'Falsa memória'], c: 1, tema: 'Exame Psíquico' },
+                { q: 'TEA nível 2 exige apoio:', o: ['Leve', 'Substancial', 'Muito substancial', 'Nenhum'], c: 1, tema: 'TEA' },
+                { q: 'Deficiência Intelectual diagnostica com:', o: ['Só QI', 'Cognitivo+adaptativo', 'Só adaptativo', 'Só linguagem'], c: 1, tema: 'DI' },
+                { q: 'Borderline caracteriza-se por:', o: ['Alucinações', 'Medo abandono', 'Obsessões', 'Delírios'], c: 1, tema: 'Transtornos' }
             ];
 
-            const getStudyTip = (score) => {
-                if (score === 5) {
-                    return {
-                        title: "PERFEITO! Você dominou esse dragão!",
-                        content: "Continue revisando os conceitos. Use flashcards e mapas mentais antes de dormir.",
-                        emoji: "👑"
-                    };
-                } else if (score >= 3) {
-                    return {
-                        title: "Muito bem! No caminho certo!",
-                        content: "Revise os temas errados. Releia os blocos específicos dos resumos. Repetição espaçada é sua aliada!",
-                        emoji: "💪"
-                    };
-                } else {
-                    return {
-                        title: "Precisa reforçar o estudo!",
-                        content: "Volte aos resumos. Foque 20 minutos nos temas errados antes de jogar novamente. Erro faz parte do aprendizado!",
-                        emoji: "📚"
-                    };
-                }
-            };
-
-            const selectRandomQuestions = () => {
-                const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-                return shuffled.slice(0, 5);
-            };
-
-            const startGame = () => {
-                const randomColor = dragonColors[Math.floor(Math.random() * dragonColors.length)];
-                setDragonColor(randomColor);
-                setSelectedQuestions(selectRandomQuestions());
-                setGameState('playing');
-                setCurrentQuestion(0);
-                setScore(0);
-                setLives(3);
-                setPowers([]);
-                setDragonHealth(5);
-                setSelectedAnswer(null);
-                setShowFeedback(false);
-            };
-
-            const selectAnswer = (index) => {
-                if (showFeedback) return;
-                setSelectedAnswer(index);
-            };
-
-            const confirmAnswer = () => {
-                if (selectedAnswer === null) return;
+            const handleAnswer = (idx) => {
+                setSelected(idx);
+                const isCorrect = idx === questions[currentQ].c;
+                setAnswers([...answers, { correct: isCorrect, tema: questions[currentQ].tema }]);
                 
-                setShowFeedback(true);
-                const isCorrect = selectedAnswer === selectedQuestions[currentQuestion].correct;
-                
-                if (isCorrect) {
-                    setScore(score + 1);
-                    setDragonHealth(dragonHealth - 1);
-                    setPowers([...powers, selectedQuestions[currentQuestion].power]);
-                } else {
-                    setLives(lives - 1);
-                }
+                if (isCorrect) setScore(score + 1);
+
+                setTimeout(() => {
+                    if (currentQ < questions.length - 1) {
+                        setCurrentQ(currentQ + 1);
+                        setSelected(null);
+                    } else {
+                        setShowResult(true);
+                    }
+                }, 1500);
             };
 
-            const nextQuestion = () => {
-                if (lives === 0) {
-                    setGameState('defeat');
-                    return;
-                }
-                
-                if (dragonHealth === 0 || currentQuestion === selectedQuestions.length - 1) {
-                    setGameState('victory');
-                    return;
-                }
-                
-                setCurrentQuestion(currentQuestion + 1);
-                setSelectedAnswer(null);
-                setShowFeedback(false);
-            };
+            if (showResult) {
+                const pct = Math.round((score / questions.length) * 100);
+                const temaAnalysis = {};
+                answers.forEach(a => {
+                    if (!temaAnalysis[a.tema]) temaAnalysis[a.tema] = { total: 0, correct: 0 };
+                    temaAnalysis[a.tema].total++;
+                    if (a.correct) temaAnalysis[a.tema].correct++;
+                });
+                const weak = Object.entries(temaAnalysis).filter(([_, v]) => v.correct / v.total < 0.7);
 
-            if (gameState === 'intro') {
                 return (
-                    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-700 to-pink-600 p-4 sm:p-8 flex items-center justify-center">
-                        <div className="max-w-2xl bg-white/10 backdrop-blur-lg rounded-3xl p-6 sm:p-8 text-white w-full">
-                            <div className="text-center mb-6">
-                                <div className="text-6xl mb-4">👑</div>
-                                <h1 className="text-3xl sm:text-4xl font-bold mb-4">A Princesa do SUS</h1>
-                                <p className="text-lg sm:text-xl mb-2">e os Dragões da Ignorância</p>
-                            </div>
-                            
-                            <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
-                                <p className="mb-4">
-                                    Você é a <strong>Princesa Psique</strong>, guardiã do conhecimento em saúde pública.
-                                </p>
-                                <p className="mb-4">
-                                    Dragões coloridos ameaçam o Reino da Saúde! Cada um traz 5 questões diferentes sobre os temas do ENARE.
-                                </p>
-                                <p className="text-yellow-300 font-bold">
-                                    Banco com 25 questões - a cada rodada, 5 questões aleatórias!
-                                </p>
+                    <div className="min-h-screen bg-gradient-to-b from-purple-600 to-pink-500 p-4 flex items-center justify-center">
+                        <div className="max-w-xl bg-white rounded-2xl p-6 w-full shadow-2xl">
+                            <h2 className="text-3xl font-bold text-center mb-4">Resultado Final</h2>
+                            <div className="bg-purple-50 rounded-xl p-6 mb-6">
+                                <p className="text-5xl font-bold text-center text-purple-600">{score}/{questions.length}</p>
+                                <p className="text-center text-gray-600 text-xl">{pct}%</p>
                             </div>
 
-                            <div className="bg-black/30 rounded-2xl p-4 sm:p-6 mb-6 text-sm sm:text-base">
-                                <h3 className="text-lg sm:text-xl font-bold mb-3">Regras:</h3>
-                                <ul className="space-y-2">
-                                    <li>❤️ Você: 3 vidas</li>
-                                    <li>🐉 Dragão: 5 vidas</li>
-                                    <li>✅ Acertou = dragão perde 1 vida + você ganha poder</li>
-                                    <li>❌ Errou = você perde 1 vida</li>
-                                    <li>🎲 Questões diferentes a cada rodada!</li>
-                                </ul>
-                            </div>
+                            {pct >= 80 ? (
+                                <div className="bg-green-50 border-2 border-green-400 rounded-lg p-4 mb-4">
+                                    <p className="text-green-800 font-bold">Excelente! Você está preparado!</p>
+                                </div>
+                            ) : pct >= 70 ? (
+                                <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-4">
+                                    <p className="text-yellow-800 font-bold">Bom! Revise os temas fracos abaixo.</p>
+                                </div>
+                            ) : (
+                                <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4 mb-4">
+                                    <p className="text-red-800 font-bold">Revise urgente os temas fracos!</p>
+                                </div>
+                            )}
+
+                            {weak.length > 0 && (
+                                <div className="mb-6">
+                                    <h3 className="font-bold mb-2">Revisar antes da prova:</h3>
+                                    <div className="space-y-1">
+                                        {weak.map(([tema, data]) => (
+                                            <div key={tema} className="flex justify-between bg-red-50 p-2 rounded text-sm">
+                                                <span>{tema}</span>
+                                                <span className="text-red-600">{data.correct}/{data.total}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             <button
-                                onClick={startGame}
-                                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
+                                onClick={() => window.location.reload()}
+                                className="w-full bg-purple-600 text-white font-bold py-3 rounded-xl"
                             >
-                                Iniciar Batalha
+                                Refazer
                             </button>
                         </div>
                     </div>
                 );
             }
 
-            if (gameState === 'playing') {
-                const q = selectedQuestions[currentQuestion];
-                const isCorrect = showFeedback && selectedAnswer === q.correct;
+            const q = questions[currentQ];
+            const answered = selected !== null;
 
-                return (
-                    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-purple-700 to-pink-600 p-4 sm:p-8">
-                        <div className="max-w-4xl mx-auto">
-                            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 mb-6 text-white text-sm sm:text-base">
-                                <div className="flex justify-between items-center mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <Heart className="text-red-400 w-5 h-5" />
-                                        <span>Vidas: {lives}/3</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span>Dragão {dragonEmojis[dragonColor]}: {dragonHealth}/5</span>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex flex-wrap gap-2">
-                                    {powers.map((power, i) => (
-                                        <div key={i} className="bg-yellow-400/20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm flex items-center gap-1">
-                                            <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
-                                            {power}
-                                        </div>
-                                    ))}
-                                </div>
+            return (
+                <div className="min-h-screen bg-gradient-to-b from-purple-600 to-pink-500 p-4">
+                    <div className="max-w-2xl mx-auto">
+                        <div className="bg-white/10 backdrop-blur rounded-xl p-4 mb-4 text-white">
+                            <div className="flex justify-between mb-2">
+                                <span className="font-bold">{q.tema}</span>
+                                <span>{currentQ + 1}/{questions.length}</span>
                             </div>
+                            <div className="w-full bg-white/20 rounded-full h-2">
+                                <div className="bg-white h-2 rounded-full transition-all" style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
+                            </div>
+                        </div>
 
-                            <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-2xl">
-                                <div className="mb-6">
-                                    <div className="flex flex-wrap gap-2 sm:gap-3 mb-4">
-                                        <span className={`px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${
-                                            q.difficulty === 'Fácil' ? 'bg-green-100 text-green-700' :
-                                            q.difficulty === 'Médio' ? 'bg-yellow-100 text-yellow-700' :
-                                            'bg-red-100 text-red-700'
-                                        }`}>
-                                            {q.difficulty}
-                                        </span>
-                                        <span className="px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold bg-purple-100 text-purple-700">
-                                            {q.theme}
-                                        </span>
-                                    </div>
-                                    
-                                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-                                        Questão {currentQuestion + 1}/5
-                                    </h2>
-                                    <p className="text-base sm:text-xl text-gray-700 leading-relaxed">
-                                        {q.question}
-                                    </p>
-                                </div>
+                        <div className="bg-white rounded-2xl p-6 shadow-xl">
+                            <h3 className="text-xl font-bold mb-6">{q.q}</h3>
 
-                                <div className="space-y-3 mb-6">
-                                    {q.options.map((option, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => selectAnswer(index)}
-                                            disabled={showFeedback}
-                                            className={`w-full p-3 sm:p-4 text-left rounded-xl border-2 transition-all text-sm sm:text-base ${
-                                                selectedAnswer === index
-                                                    ? showFeedback
-                                                        ? index === q.correct
-                                                            ? 'border-green-500 bg-green-50'
-                                                            : 'border-red-500 bg-red-50'
-                                                        : 'border-purple-500 bg-purple-50'
-                                                    : 'border-gray-200 active:border-purple-300 active:bg-gray-50'
-                                            } ${showFeedback && index === q.correct ? 'border-green-500 bg-green-50' : ''}`}
-                                        >
-                                            <span className="font-medium">
-                                                {String.fromCharCode(65 + index)}) {option}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {showFeedback && (
-                                    <div className={`p-4 sm:p-6 rounded-xl mb-6 ${
-                                        isCorrect ? 'bg-green-50 border-2 border-green-300' : 'bg-red-50 border-2 border-red-300'
-                                    }`}>
-                                        <div className="flex items-center gap-3 mb-3">
-                                            {isCorrect ? (
-                                                <>
-                                                    <Zap className="text-green-600 w-6 h-6 sm:w-8 sm:h-8" />
-                                                    <span className="text-xl sm:text-2xl font-bold text-green-700">Acertou!</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <span className="text-xl sm:text-2xl">💔</span>
-                                                    <span className="text-xl sm:text-2xl font-bold text-red-700">Errou!</span>
-                                                </>
-                                            )}
-                                        </div>
-                                        <p className="text-gray-700 text-sm sm:text-lg">{q.explanation}</p>
-                                        {isCorrect && (
-                                            <div className="mt-4 flex items-center gap-2 text-yellow-600 font-bold text-sm sm:text-base">
-                                                <Award className="w-5 h-5 sm:w-6 sm:h-6" />
-                                                Poder desbloqueado: {q.power}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {!showFeedback ? (
+                            <div className="space-y-3">
+                                {q.o.map((opt, idx) => (
                                     <button
-                                        onClick={confirmAnswer}
-                                        disabled={selectedAnswer === null}
-                                        className={`w-full py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl font-bold transition-all ${
-                                            selectedAnswer === null
-                                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                : 'bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white transform active:scale-95'
+                                        key={idx}
+                                        onClick={() => !answered && handleAnswer(idx)}
+                                        disabled={answered}
+                                        className={`w-full p-4 text-left rounded-xl border-2 transition ${
+                                            !answered ? 'border-gray-200 hover:border-purple-400 hover:bg-purple-50' :
+                                            selected === idx ? (idx === q.c ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50') :
+                                            idx === q.c ? 'border-green-500 bg-green-50' : 'border-gray-200 opacity-50'
                                         }`}
                                     >
-                                        Confirmar Resposta
+                                        {opt}
                                     </button>
-                                ) : (
-                                    <button
-                                        onClick={nextQuestion}
-                                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
-                                    >
-                                        Próxima Questão
-                                    </button>
-                                )}
+                                ))}
                             </div>
+
+                            {answered && q.exp && (
+                                <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                                    <p className="text-sm text-blue-800">{q.exp}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="text-center mt-4 text-white font-bold">
+                            Acertos: {score}/{currentQ + (answered ? 1 : 0)}
                         </div>
                     </div>
-                );
-            }
-
-            if (gameState === 'victory') {
-                const studyTip = getStudyTip(score);
-                const dragonGradient = 
-                    dragonColor === 'purple' ? 'from-purple-400 to-purple-600' :
-                    dragonColor === 'blue' ? 'from-blue-400 to-blue-600' :
-                    dragonColor === 'green' ? 'from-green-400 to-green-600' :
-                    dragonColor === 'orange' ? 'from-orange-400 to-orange-600' :
-                    'from-pink-400 to-pink-600';
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-b from-yellow-400 via-orange-400 to-pink-500 p-4 sm:p-8 flex items-center justify-center">
-                        <div className="max-w-2xl bg-white rounded-3xl p-6 sm:p-8 text-center w-full">
-                            <div className="text-6xl sm:text-8xl mb-6">👑</div>
-                            <h1 className="text-4xl sm:text-5xl font-bold text-purple-800 mb-4">VITÓRIA!</h1>
-                            <p className="text-xl sm:text-2xl text-gray-700 mb-6">
-                                A Princesa Psique derrotou o Dragão {dragonEmojis[dragonColor]}!
-                            </p>
-                            
-                            <div className="mb-6 relative">
-                                <div className={`w-32 h-32 sm:w-48 sm:h-48 mx-auto rounded-full bg-gradient-to-br ${dragonGradient} flex items-center justify-center shadow-2xl border-4 border-white`}>
-                                    <span className="text-6xl sm:text-8xl opacity-50">🐉</span>
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-4xl sm:text-6xl">✨</span>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-purple-50 rounded-2xl p-4 sm:p-6 mb-6">
-                                <p className="text-lg sm:text-xl mb-4">Você acertou <strong>{score}/5</strong> questões</p>
-                                <p className="text-base sm:text-lg text-gray-600 mb-4">Poderes conquistados:</p>
-                                <div className="space-y-2">
-                                    {powers.map((power, i) => (
-                                        <div key={i} className="flex items-center justify-center gap-2 text-purple-700 font-medium text-sm sm:text-base">
-                                            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                                            {power}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-purple-300 rounded-xl p-4 sm:p-6 mb-6">
-                                <div className="text-3xl sm:text-4xl mb-3">{studyTip.emoji}</div>
-                                <h3 className="text-lg sm:text-xl font-bold text-purple-800 mb-3">{studyTip.title}</h3>
-                                <p className="text-gray-700 text-left leading-relaxed text-sm sm:text-base">
-                                    {studyTip.content}
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={startGame}
-                                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
-                            >
-                                Enfrentar Novo Dragão
-                            </button>
-                        </div>
-                    </div>
-                );
-            }
-
-            if (gameState === 'defeat') {
-                const studyTip = getStudyTip(score);
-                const dragonGradient = 
-                    dragonColor === 'purple' ? 'from-purple-400 to-purple-600' :
-                    dragonColor === 'blue' ? 'from-blue-400 to-blue-600' :
-                    dragonColor === 'green' ? 'from-green-400 to-green-600' :
-                    dragonColor === 'orange' ? 'from-orange-400 to-orange-600' :
-                    'from-pink-400 to-pink-600';
-
-                return (
-                    <div className="min-h-screen bg-gradient-to-b from-gray-700 via-gray-800 to-black p-4 sm:p-8 flex items-center justify-center">
-                        <div className="max-w-2xl bg-white rounded-3xl p-6 sm:p-8 text-center w-full">
-                            <div className="text-6xl sm:text-8xl mb-6">💔</div>
-                            <h1 className="text-4xl sm:text-5xl font-bold text-red-600 mb-4">Derrota...</h1>
-                            <p className="text-xl sm:text-2xl text-gray-700 mb-6">
-                                O Dragão {dragonEmojis[dragonColor]} venceu desta vez!
-                            </p>
-                            
-                            <div className="mb-6 relative">
-                                <div className={`w-32 h-32 sm:w-48 sm:h-48 mx-auto rounded-full bg-gradient-to-br ${dragonGradient} flex items-center justify-center shadow-2xl border-4 border-white animate-pulse`}>
-                                    <span className="text-6xl sm:text-8xl">🐉</span>
-                                </div>
-                                <div className="absolute -top-4 -right-4">
-                                    <span className="text-3xl sm:text-4xl">🔥</span>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-red-50 rounded-2xl p-4 sm:p-6 mb-6">
-                                <p className="text-lg sm:text-xl mb-4">Você acertou <strong>{score}/5</strong> questões</p>
-                                {powers.length > 0 && (
-                                    <>
-                                        <p className="text-base sm:text-lg text-gray-600 mb-4">Poderes que você conseguiu:</p>
-                                        <div className="space-y-2">
-                                            {powers.map((power, i) => (
-                                                <div key={i} className="flex items-center justify-center gap-2 text-purple-700 font-medium text-sm sm:text-base">
-                                                    <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
-                                                    {power}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-
-                            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-300 rounded-xl p-4 sm:p-6 mb-6">
-                                <div className="text-3xl sm:text-4xl mb-3">{studyTip.emoji}</div>
-                                <h3 className="text-lg sm:text-xl font-bold text-blue-800 mb-3">{studyTip.title}</h3>
-                                <p className="text-gray-700 text-left leading-relaxed text-sm sm:text-base">
-                                    {studyTip.content}
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={startGame}
-                                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 active:from-purple-600 active:to-pink-600 text-white font-bold py-3 sm:py-4 px-8 rounded-xl text-lg sm:text-xl transition-all transform active:scale-95"
-                            >
-                                Tentar Novamente
-                            </button>
-                        </div>
-                    </div>
-                );
-            }
-
-            return null;
+                </div>
+            );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<DragonGame />);
+        root.render(<RevisaoApp />);
     </script>
 
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
